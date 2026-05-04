@@ -41,13 +41,21 @@ public class OrdersEndpointTests
         // Arrange
         // TODO: criar RestRequest("/api/orders", Method.Get)
 
+    var request = new RestRequest("/api/orders", Method.Get);
+
         // Act
         // TODO: response = await _client.ExecuteAsync(request)
+
+        var response = await _client.ExecuteAsync(request);
 
         // Assert
         // TODO: response.StatusCode.Should().Be(HttpStatusCode.OK)
         //       response.Content.Should().NotBeNull()
-        Assert.Fail("Implementar teste — remover quando concluir.");
+
+    response.StatusCode.Should().Be(HttpStatusCode.OK);
+    response.Content.Should().NotBeNull();
+
+    //    Assert.Fail("Implementar teste — remover quando concluir.");
     }
 
     [Fact(DisplayName = "POST /api/orders com payload válido retorna 201 Created")]
@@ -59,13 +67,28 @@ public class OrdersEndpointTests
         //       new { productId = 1, productName = "Mouse", unitPrice = 50, quantity = 2 }
         //   }, discountRate = 0.1 }
 
+    var request = new RestRequest("/api/orders", Method.Post);
+    request.AddJsonBody(new { 
+        customerName = "Maria", 
+        items = new[] { 
+            new { productId = 1, productName = "Mouse", unitPrice = 50, quantity = 2 }
+        }, 
+        discountRate = 0.1 
+    });
+
         // Act
         // TODO: enviar POST com AddJsonBody(payload)
+
+        var response = await _client.ExecuteAsync(request);
 
         // Assert
         // TODO: response.StatusCode.Should().Be(HttpStatusCode.Created);
         //       response.Content.Should().Contain("total");
-        Assert.Fail("Implementar teste — remover quando concluir.");
+
+    response.StatusCode.Should().Be(HttpStatusCode.Created);
+    response.Content.Should().Contain("total");
+
+    //    Assert.Fail("Implementar teste — remover quando concluir.");
     }
 
     [Fact(DisplayName = "POST /api/orders sem itens retorna 400 BadRequest")]
@@ -74,13 +97,27 @@ public class OrdersEndpointTests
         // Arrange
         // TODO: payload com items = new object[] { }
 
+  var request = new RestRequest("/api/orders", Method.Post);
+    
+    request.AddJsonBody(new { 
+        customerName = "Sem  Itens", 
+        items = new object[] { }, 
+        discountRate = 0.0 
+    });
+
         // Act
         // TODO: enviar POST com AddJsonBody(payload)
+
+    var response = await _client.ExecuteAsync(request);
+
 
         // Assert
         // TODO: response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         //       response.Content.Should().Contain("vazio");
-        Assert.Fail("Implementar teste — remover quando concluir.");
+
+    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    response.Content.Should().Contain("vazio");
+     //   Assert.Fail("Implementar teste — remover quando concluir.");
     }
 
     // -------------------------------------------------------------------
