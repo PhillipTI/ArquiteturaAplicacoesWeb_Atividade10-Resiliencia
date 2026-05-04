@@ -43,7 +43,7 @@ public class OrderServiceTests
 
     result.Should().Be(90m);
 
-        Assert.Fail("Implementar teste — remover quando concluir.");
+    //    Assert.Fail("Implementar teste — remover quando concluir.");
     }
 
 
@@ -65,7 +65,8 @@ public class OrderServiceTests
         // TODO: validar com FluentAssertions:
 
         act.Should().Throw<ArgumentException>().WithMessage("*entre 0 e 1*");
-        Assert.Fail("Implementar teste — remover quando concluir.");
+
+     //   Assert.Fail("Implementar teste — remover quando concluir.");
     }
 
     [Fact(DisplayName = "PlaceOrder: pedido sem itens lança InvalidOperationException")]
