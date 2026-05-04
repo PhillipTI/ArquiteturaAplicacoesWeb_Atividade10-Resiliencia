@@ -2,7 +2,7 @@ using System.Net;
 using FluentAssertions;
 using RestSharp;
 using Xunit;
-
+using Polly;
 namespace ResilientOrders.IntegrationTests;
 
 // =====================================================================
@@ -139,5 +139,32 @@ public class OrdersEndpointTests
     //    Func<Task> act = async () => await policy.ExecuteAsync(...);
     //    await act.Should().ThrowAsync<Exception>();
     //    attempts.Should().Be(3);
-    // -------------------------------------------------------------------
-}
+
+[Fact(DisplayName = "Polly: retry policy executa exatamente 3 tentativas")]
+public async Task RetryPolicy_ExecutesExactly3Retries()
+{
+    // Arrange
+    var attempts = 0;
+
+    var policy = Policy
+        .Handle<Exception>()
+        .WaitAndRetryAsync(3,
+            attempt => TimeSpan.FromMilliseconds(50 * attempt),
+            (_, _, _, _) => attempts++);
+
+    // Act
+    // URL inexistente para forçar falha
+    Func<Task> act = async () => await policy.ExecuteAsync(async () =>
+    {
+        var client = new RestClient("http://localhost:9");
+        var request = new RestRequest("/api/orders", Method.Get);
+        var response = await client.ExecuteAsync(request);
+        
+        if (!response.IsSuccessful)
+            throw new Exception("Falha na requisição");
+    });
+
+    // Assert
+    await act.Should().ThrowAsync<Exception>();
+    attempts.Should().Be(3);
+}}
